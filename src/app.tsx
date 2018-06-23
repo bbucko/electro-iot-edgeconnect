@@ -7,8 +7,10 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-
+import Icon from '@material-ui/core/Icon';
 import * as mqtt from 'mqtt';
+
+const settings = require('electron').remote.require('electron-settings');
 
 export class App extends React.Component<any, any> {
 
@@ -17,24 +19,26 @@ export class App extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
         this.state = {
-            url: '',
-            jwtToken: '',
-            topic: '',
+            url: settings.get('mqtt.url'),
+            username: settings.get('mqtt.username'),
+            password: settings.get('mqtt.password'),
+            topic: settings.get('mqtt.topic'),
             connected: false,
             data: []
         };
     }
 
     handleUrlChange = (event: any) => this.setState({url: event.target.value});
-    handleJwtTokenChange = (event: any) => this.setState({jwtToken: event.target.value});
+    handlePasswordChange = (event: any) => this.setState({password: event.target.value});
     handleTopicChange = (event: any) => this.setState({topic: event.target.value});
+    handleUsernameChange = (event: any) => this.setState({username: event.target.value});
 
     handleClick = () => {
         let options = {
             servername: this.state.url,
-            username: 'openHAB',
-            clientId: 'openHAB',
-            password: this.state.jwtToken
+            username: this.state.username,
+            clientId: this.state.username,
+            password: this.state.password
         };
         this.client = mqtt.connect(`mqtts://${this.state.url}:8883`, options);
 
@@ -49,47 +53,63 @@ export class App extends React.Component<any, any> {
                 data: [...prevState.data, {id: prevState.data.length + 1, topic: topic, payload: message}]
             }));
         });
+
+        settings.set('mqtt', {
+            url: this.state.url,
+            username: this.state.username,
+            password: this.state.password,
+            topic: this.state.topic,
+        });
     };
 
     render() {
         return (
             <div style={{margin: 20}}>
                 <Grid container spacing={24}>
-                    <Grid item xs={4}>
-                        <TextField id='url' label='URL' margin='normal' onChange={this.handleUrlChange}/>
+                    <Grid item xs={6}>
+                        <TextField fullWidth={true} label='URL' value={this.state.url} onChange={this.handleUrlChange}/>
                     </Grid>
-                    <Grid item xs={4}>
-                        <TextField id='jwtToken' label='JWT Token' margin='normal' onChange={this.handleJwtTokenChange}/>
+                    <Grid item xs={6}>
+                        <TextField fullWidth={true} label='Topic' value={this.state.topic} onChange={this.handleTopicChange}/>
                     </Grid>
-                    <Grid item xs={4}>
-                        <TextField id='topic' label='Topic' margin='normal' onChange={this.handleTopicChange}/>
+                </Grid>
+
+                <Grid container spacing={24}>
+                    <Grid item xs={6}>
+                        <TextField fullWidth={true} label='Username' value={this.state.username} onChange={this.handleUsernameChange}/>
                     </Grid>
+                    <Grid item xs={6}>
+                        <TextField fullWidth={true} label='Password' value={this.state.password} onChange={this.handlePasswordChange}/>
+                    </Grid>
+
                     <Grid container spacing={24}>
                         <Grid item xs={4}>
-                            <Button disabled={this.state.connected} variant='contained' color='primary' onClick={this.handleClick}> Connect </Button>
+                            <Button disabled={this.state.connected} variant='contained' color='primary' onClick={this.handleClick}>Connect</Button>
+                            <Icon color={this.state.connected ? 'primary' : 'error'}>star</Icon>
                         </Grid>
                     </Grid>
-                    <Grid container spacing={24}>
-                        <Grid item xs={12}>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Topic</TableCell>
-                                        <TableCell>Payload</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {this.state.data.map((n: any) => {
-                                        return (
-                                            <TableRow key={n.id}>
-                                                <TableCell component='th' scope='row'>{n.topic}</TableCell>
-                                                <TableCell>{n.payload}</TableCell>
-                                            </TableRow>
-                                        );
-                                    })}
-                                </TableBody>
-                            </Table>
-                        </Grid>
+
+                </Grid>
+                <Grid container spacing={24}>
+                    <Grid item xs={12}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Topic</TableCell>
+                                    <TableCell>Payload</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {this.state.data.map((n: any) => {
+                                    return (
+                                        <TableRow key={n.id}>
+                                            <TableCell component='th' scope='row'>{n.topic}</TableCell>
+                                            <TableCell>{n.payload}</TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                            </TableBody>
+                        </Table>
                     </Grid>
                 </Grid>
             </div>
