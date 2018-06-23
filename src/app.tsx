@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {remote} from 'electron';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
@@ -10,7 +11,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Icon from '@material-ui/core/Icon';
 import * as mqtt from 'mqtt';
 
-const settings = require('electron').remote.require('electron-settings');
+const settings = remote.require('electron-settings');
 
 export class App extends React.Component<any, any> {
 

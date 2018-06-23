@@ -1,8 +1,8 @@
 {
-  "name": "edgeconnect-demo2",
-  "productName": "edgeconnect-demo2",
+  "name": "edgeconnect-demo",
+  "productName": "edgeconnect-demo",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "IoT EdgeConnect demo application",
   "main": "src/index.ts",
   "scripts": {
     "start": "electron-forge start",
