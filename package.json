@@ -37,8 +37,8 @@
       "electronInstallerDebian": {},
       "electronInstallerRedhat": {},
       "github_repository": {
-        "owner": "",
-        "name": ""
+        "owner": "bbucko",
+        "name": "edgeconnect-demo2"
       },
       "windowsStoreConfig": {
         "packageName": "",
