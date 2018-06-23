@@ -49,8 +49,9 @@ export class App extends React.Component<any, any> {
         });
 
         this.client.on('message', (topic, message) => {
+            console.log(`msg: ${message} on topic: ${topic}`);
             this.setState(prevState => ({
-                data: [...prevState.data, {id: prevState.data.length + 1, topic: topic, payload: message}]
+                data: [...prevState.data, {id: prevState.data.length + 1, topic: topic, payload: `${message}`}]
             }));
         });
 
@@ -64,33 +65,35 @@ export class App extends React.Component<any, any> {
 
     render() {
         return (
-            <div style={{margin: 20}}>
-                <Grid container spacing={24}>
-                    <Grid item xs={6}>
+            <div>
+                <Grid container spacing={16}>
+                    <Grid item xs={4}>
                         <TextField fullWidth={true} label='URL' value={this.state.url} onChange={this.handleUrlChange}/>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={4}>
                         <TextField fullWidth={true} label='Topic' value={this.state.topic} onChange={this.handleTopicChange}/>
                     </Grid>
                 </Grid>
 
-                <Grid container spacing={24}>
-                    <Grid item xs={6}>
+                <Grid container spacing={16}>
+                    <Grid item xs={4}>
                         <TextField fullWidth={true} label='Username' value={this.state.username} onChange={this.handleUsernameChange}/>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={4}>
                         <TextField fullWidth={true} label='Password' value={this.state.password} onChange={this.handlePasswordChange}/>
                     </Grid>
-
-                    <Grid container spacing={24}>
-                        <Grid item xs={4}>
-                            <Button disabled={this.state.connected} variant='contained' color='primary' onClick={this.handleClick}>Connect</Button>
-                            <Icon color={this.state.connected ? 'primary' : 'error'}>star</Icon>
-                        </Grid>
-                    </Grid>
-
                 </Grid>
-                <Grid container spacing={24}>
+
+                <Grid container spacing={16} alignItems={'center'}>
+                    <Grid item xs={2}>
+                        <Button disabled={this.state.connected} variant='contained' color='primary' onClick={this.handleClick}>Connect</Button>
+                    </Grid>
+                    <Grid item xs={1}>
+                        <Icon>{this.state.connected ? 'phonelink' : 'phonelink_off'}</Icon>
+                    </Grid>
+                </Grid>
+
+                <Grid container spacing={16}>
                     <Grid item xs={12}>
                         <Table>
                             <TableHead>
